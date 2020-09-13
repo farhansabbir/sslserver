@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dmartslib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../app.dmarts.lib/out/artifacts/dmartslib_jar/dmartslib.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

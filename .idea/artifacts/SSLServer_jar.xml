@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SSLServer:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SSLServer_jar</output-path>
+    <root id="archive" name="SSLServer.jar">
+      <element id="module-output" name="SSLServer" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../app.dmarts.lib/out/artifacts/dmartslib_jar/dmartslib.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
