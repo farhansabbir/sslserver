@@ -8,44 +8,21 @@ import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
 
         Server server = new Server(Defs.HTTP_SERVER_DEFAULT_PORT,20);
         server.startServer();
-        /*
-        Socket client = sslServerSocket.accept();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        HashMap<String, String> headers = new HashMap();
-        HashMap<String, String> body = new HashMap();
-        StringBuilder INIT = new StringBuilder();
-        try {
-            int data;
-            while ((data = reader.read())>=0){
-                if ((char)data == '\n') break;
-                INIT.append((char)data);
-            }
-        }catch (javax.net.ssl.SSLHandshakeException hex){
-            System.err.println(hex);
-        }
 
-        System.out.println(INIT.toString());
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-        writer.write("HTTP/1.2 200\n\n");
-        writer.flush();
-
-
-        writer.close();
-        reader.close();
-        client.close();
-*/
 
 
     }
 }
 
+/***
+ * No one is allowed to extend this class; It should effectively be a singleton, but let's see where it goes
+ */
 final class Server implements Runnable{
 
     private int PORT, BACKLOG;
@@ -92,8 +69,9 @@ final class Server implements Runnable{
 
     public void stopServer(){
         try {
+            Thread.currentThread().join();
             this.sslServerSocket.close();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -102,14 +80,12 @@ final class Server implements Runnable{
 
     @Override
     public void run() {
+        // Test code to check client connectivity; we will build on top of this in client thread later
         Socket client = null;
         try {
             client = sslServerSocket.accept();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-            HashMap<String, String> headers = new HashMap();
-            HashMap<String, String> body = new HashMap();
             StringBuilder INIT = new StringBuilder();
 
             int data;
@@ -121,7 +97,7 @@ final class Server implements Runnable{
             System.out.println(INIT.toString());
 
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-            writer.write("HTTP/1.2 200\n\n");
+            writer.write("HTTP/1.1 200\n\n");
             writer.flush();
             writer.close();
             reader.close();
