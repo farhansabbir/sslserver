@@ -80,7 +80,7 @@ public final class Server implements Runnable{
             this.READER = new BufferedReader(new InputStreamReader(client.getInputStream()));
             System.out.println("Request: " + this.getRequestLine());
             System.out.println("Header: " + this.getRequestHeaders());
-            //System.out.println("Body: " + this.getRequestBody());
+            System.out.println("Body: " + this.getRequestBody());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
             writer.write("HTTP/1.1 200\n\n");
             writer.flush();
@@ -124,11 +124,11 @@ public final class Server implements Runnable{
     }
 
     public String getRequestBody() throws IOException {
-        StringBuilder body = new StringBuilder();
-        while (true){
-            System.out.println(this.readByLine().length());
+        StringBuilder ret = new StringBuilder();
+        while (this.READER.ready()){
+            ret.append((char) this.READER.read());
         }
-        //return body.toString();
+        return ret.toString();
     }
 }
 
