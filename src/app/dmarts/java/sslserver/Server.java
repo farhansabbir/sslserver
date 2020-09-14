@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 /***
  * No one is allowed to extend this class; It should effectively be a singleton, but let's see where it goes
@@ -17,6 +18,9 @@ public final class Server implements Runnable{
 
     private int PORT, BACKLOG;
     private SSLServerSocket sslServerSocket;
+
+    private BufferedReader READER;
+
     public Server(int port, int backlog) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, KeyManagementException, KeyStoreException {
         this.BACKLOG = backlog;
         this.PORT = port;
@@ -66,8 +70,6 @@ public final class Server implements Runnable{
         }
     }
 
-
-
     @Override
     public void run() {
         // Test code to check client connectivity; we will build on top of this in client thread later
@@ -75,26 +77,58 @@ public final class Server implements Runnable{
         try {
             client = sslServerSocket.accept();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            StringBuilder INIT = new StringBuilder();
-
-            int data;
-            while ((data = reader.read())>=0) {
-                if ((char) data == '\n') break;
-                INIT.append((char) data);
-            }
-
-            System.out.println(INIT.toString());
-
+            this.READER = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            System.out.println("Request: " + this.getRequestLine());
+            System.out.println("Header: " + this.getRequestHeaders());
+            //System.out.println("Body: " + this.getRequestBody());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
             writer.write("HTTP/1.1 200\n\n");
             writer.flush();
             writer.close();
-            reader.close();
+            this.READER.close();
             client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private String readByLine() throws IOException {
+        String line = this.READER.readLine();
+        if (line==null) return "";
+        return line;
+        /*
+        StringBuilder INIT = new StringBuilder();
+        int data;
+        while ((data = this.READER.read())>=0) {
+            if ((char) data == '\n') {
+                break;
+            }
+            INIT.append((char) data);
+        }
+        return INIT.toString();
+        */
+    }
+
+    public String getRequestLine() throws IOException {
+        return this.readByLine();
+    }
+
+    public HashMap<String, String> getRequestHeaders() throws IOException {
+        HashMap<String,String> ret = new HashMap<>();
+        String header;
+        while((header = this.readByLine()).length()!=0) {
+            ret.put(header.split(":")[0].trim(),header.split(":")[1].trim());
+        }
+        return ret;
+    }
+
+    public String getRequestBody() throws IOException {
+        StringBuilder body = new StringBuilder();
+        while (true){
+            System.out.println(this.readByLine().length());
+        }
+        //return body.toString();
     }
 }
 
