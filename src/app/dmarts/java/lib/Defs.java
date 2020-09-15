@@ -8,4 +8,5 @@ public interface Defs {
     public final int HTTP_SERVER_FALLBACK_PORT2             = 8081;
     public final String HTTP_STATUS_CONTEXT                 = "/status";
     public final String[] HTTP_CONTEXT_ALLOWED_METHODS      =   new String[]{"POST","GET"};
+    public final int HTTP_CLIENT_BACKLOG                    = 20;
 }

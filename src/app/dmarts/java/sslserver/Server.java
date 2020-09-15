@@ -1,14 +1,21 @@
 package app.dmarts.java.sslserver;
 
 import app.dmarts.java.lib.Defs;
+import app.dmarts.java.lib.HttpClient;
+import app.dmarts.java.lib.HttpRequest;
 
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /***
  * No one is allowed to extend this class; It should effectively be a singleton, but let's see where it goes
@@ -18,6 +25,7 @@ public final class Server implements Runnable{
 
     private int PORT, BACKLOG;
     private SSLServerSocket sslServerSocket;
+    ExecutorService CLIENTTHREADPOOL;
 
     private BufferedReader READER;
 
@@ -52,17 +60,19 @@ public final class Server implements Runnable{
             }
         }}, new SecureRandom());
 
-        this.sslServerSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(Defs.HTTP_SERVER_DEFAULT_PORT,20);
+        this.sslServerSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(Defs.HTTP_SERVER_DEFAULT_PORT,Defs.HTTP_CLIENT_BACKLOG);
         this.sslServerSocket.setEnabledProtocols(new String[]{"TLSv1", "TLSv1.1", "TLSv1.2", "SSLv3"});
     }
 
     public void startServer(){
         Thread MYSELF = new Thread(this);
         MYSELF.start();
+        this.CLIENTTHREADPOOL = Executors.newFixedThreadPool(Defs.HTTP_CLIENT_BACKLOG);
     }
 
     public void stopServer(){
         try {
+            this.CLIENTTHREADPOOL.shutdown();
             Thread.currentThread().join();
             this.sslServerSocket.close();
         } catch (IOException | InterruptedException e) {
@@ -73,62 +83,15 @@ public final class Server implements Runnable{
     @Override
     public void run() {
         // Test code to check client connectivity; we will build on top of this in client thread later
-        Socket client = null;
-        try {
-            client = sslServerSocket.accept();
 
-            this.READER = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            System.out.println("Request: " + this.getRequestLine());
-            System.out.println("Header: " + this.getRequestHeaders());
-            System.out.println("Body: " + this.getRequestBody());
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-            writer.write("HTTP/1.1 200\n\n");
-            writer.flush();
-            writer.close();
-            this.READER.close();
-            client.close();
+        while (true)
+        try {
+            HttpClient httpClient = new HttpClient(sslServerSocket.accept());
+            Future task = this.CLIENTTHREADPOOL.submit(httpClient);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    private String readByLine() throws IOException {
-        String line = this.READER.readLine();
-        if (line==null) return "";
-        return line;
-        /*
-        StringBuilder INIT = new StringBuilder();
-        int data;
-        while ((data = this.READER.read())>=0) {
-            if ((char) data == '\n') {
-                break;
-            }
-            INIT.append((char) data);
-        }
-        return INIT.toString();
-        */
-    }
-
-    public String getRequestLine() throws IOException {
-        return this.readByLine();
-    }
-
-    public HashMap<String, String> getRequestHeaders() throws IOException {
-        HashMap<String,String> ret = new HashMap<>();
-        String header;
-        while((header = this.readByLine()).length()!=0) {
-            ret.put(header.split(":")[0].trim(),header.split(":")[1].trim());
-        }
-        return ret;
-    }
-
-    public String getRequestBody() throws IOException {
-        StringBuilder ret = new StringBuilder();
-        while (this.READER.ready()){
-            ret.append((char) this.READER.read());
-        }
-        return ret.toString();
-    }
 }
 
