@@ -1,4 +1,9 @@
 package app.dmarts.java.lib;
+/**
+ * Author: Farhan Sabbir Siddique
+ * Email: fsabbir@gmail.com
+ * Web: github.com/farhansabbir
+ */
 
 import com.google.gson.JsonObject;
 

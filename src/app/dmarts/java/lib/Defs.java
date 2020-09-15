@@ -1,4 +1,9 @@
 package app.dmarts.java.lib;
+/**
+ * Author: Farhan Sabbir Siddique
+ * Email: fsabbir@gmail.com
+ * Web: github.com/farhansabbir
+ */
 
 public interface Defs {
     public final int HTTP_STATUS_OK                         = 200;
