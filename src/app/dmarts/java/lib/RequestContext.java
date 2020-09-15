@@ -5,9 +5,8 @@ package app.dmarts.java.lib;
  * Web: github.com/farhansabbir
  */
 
-public interface Context {
+public interface RequestContext {
     public String getContextPath();
-    public void setContextPath(String contextpath);
     public static String[] getAllowedMethods(){
         return Defs.HTTP_CONTEXT_ALLOWED_METHODS;
     }

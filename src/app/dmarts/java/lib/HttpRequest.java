@@ -8,7 +8,7 @@ package app.dmarts.java.lib;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class HttpRequest {
+public class HttpRequest implements RequestContext {
     private String METHOD, PATH, HTTP_VER;
     private HashMap<String,String> HEADERS;
     private StringBuilder BODY;
@@ -25,12 +25,15 @@ public class HttpRequest {
     public String getRequestMethod(){
         return this.METHOD;
     }
-
     public String getRequestBody(){
         return this.BODY.toString();
     }
-
     public HashMap<String,String> getRequestHeaders(){
         return this.HEADERS;
+    }
+
+    @Override
+    public String getContextPath() {
+        return this.PATH;
     }
 }

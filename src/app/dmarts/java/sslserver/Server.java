@@ -7,17 +7,17 @@ package app.dmarts.java.sslserver;
 
 import app.dmarts.java.lib.Defs;
 import app.dmarts.java.lib.HttpClient;
-import app.dmarts.java.lib.HttpRequest;
-
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.Socket;
-import java.net.SocketException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -31,6 +31,7 @@ public final class Server implements Runnable{
     private int PORT, BACKLOG;
     private SSLServerSocket sslServerSocket;
     ExecutorService CLIENTTHREADPOOL;
+    public static java.util.concurrent.ConcurrentHashMap<String, String> CONTEXTS = new ConcurrentHashMap<>(); // might need to consider to have nio watcher to add new folders in context, hence concurrenthashmap
 
     private BufferedReader READER;
 
@@ -41,6 +42,11 @@ public final class Server implements Runnable{
     }
 
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
+        DirectoryStream<Path> dirs = Files.newDirectoryStream(Paths.get("www"));
+        CONTEXTS.put("/",Paths.get("www").toAbsolutePath().toString());
+        for(Path dir: dirs){
+            CONTEXTS.put("/" + dir.getFileName(), dir.toAbsolutePath().toString());
+        }
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream("keystore.jks"),"123456".toCharArray());

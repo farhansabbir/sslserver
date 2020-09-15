@@ -5,11 +5,10 @@ package app.dmarts.java.lib;
  * Web: github.com/farhansabbir
  */
 
+import app.dmarts.java.sslserver.Server;
+
 import javax.net.ssl.SSLHandshakeException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
@@ -28,8 +27,14 @@ public class HttpClient implements Runnable{
         try {
              httpParser = new HttpParser(this.CLIENTSOCKET.getInputStream());
              this.REQUEST = httpParser.parseHttpRequest();
-             System.out.println(this.REQUEST.getRequestMethod());
+             if (!Server.CONTEXTS.containsKey(this.REQUEST.getContextPath())){
+                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
+                 writer.write("HTTP/1.1 " + Defs.HTTP_STATUS_NOT_FOUND + " Not Found\nServer: devn\nContent-type:text/html\n\n<h1>Not Found</h1>");
+                 writer.flush();
+                 writer.close();
+             }
              System.out.println(this.REQUEST.getRequestHeaders());
+            System.out.println(this.REQUEST.getContextPath());
         } catch (Exception e) {
             System.err.println(e);
         }
