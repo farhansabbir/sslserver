@@ -31,6 +31,9 @@ public class HttpRequest implements RequestContext {
     public HashMap<String,String> getRequestHeaders(){
         return this.HEADERS;
     }
+    public String getHttpVersion(){
+        return this.HTTP_VER;
+    }
 
     @Override
     public String getContextPath() {
