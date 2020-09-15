@@ -17,8 +17,10 @@ public class HttpClient implements Runnable{
 
     private Socket CLIENTSOCKET;
     private HttpRequest REQUEST;
-    public HttpClient(Socket socket){
+    public HttpClient(Socket socket) throws SocketException {
         this.CLIENTSOCKET = socket;
+        this.CLIENTSOCKET.setSoTimeout(10);
+        this.CLIENTSOCKET.setTcpNoDelay(true);
     }
 
     @Override
@@ -33,8 +35,7 @@ public class HttpClient implements Runnable{
                  writer.flush();
                  writer.close();
              }
-             System.out.println(this.REQUEST.getRequestHeaders());
-            System.out.println(this.REQUEST.getContextPath());
+            System.out.println(Thread.currentThread().getName());
         } catch (Exception e) {
             System.err.println(e);
         }
