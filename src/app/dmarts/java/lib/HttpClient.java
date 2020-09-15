@@ -19,8 +19,6 @@ public class HttpClient implements Runnable{
     private HttpRequest REQUEST;
     public HttpClient(Socket socket) throws SocketException {
         this.CLIENTSOCKET = socket;
-        this.CLIENTSOCKET.setSoTimeout(10);
-        this.CLIENTSOCKET.setTcpNoDelay(true);
     }
 
     @Override
