@@ -24,8 +24,6 @@ public class HttpParser{
         request = new HttpRequest(req_line,headers,body);
         return request;
     }
-
-
     private String readByLine() throws IOException {
         String line = new String();
         try {
