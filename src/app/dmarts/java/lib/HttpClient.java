@@ -7,11 +7,9 @@ package app.dmarts.java.lib;
 
 import app.dmarts.java.sslserver.Server;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.HashMap;
 
 public class HttpClient implements Runnable{
 
@@ -29,7 +27,8 @@ public class HttpClient implements Runnable{
              this.REQUEST = httpParser.parseHttpRequest();
              if (!Server.CONTEXTS.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
-                 writer.write(this.REQUEST.getHttpVersion() + " " + Defs.HTTP_STATUS_NOT_FOUND + " Not Found\nServer: devn\nContent-type:text/html\n\n<h1>Not Found</h1>");
+                 writer.write(HttpResponse.getNotFoundHTMLResponse(this.REQUEST));
+                 //writer.write(this.REQUEST.getHttpVersion() + " " + Defs.HTTP_STATUS_NOT_FOUND_INT + " Not Found\nServer: devn\nContent-type:text/html\n\n<h1>Not Found</h1>");
                  writer.flush();
                  writer.close();
              }
