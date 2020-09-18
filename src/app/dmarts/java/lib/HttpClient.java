@@ -29,21 +29,20 @@ public class HttpClient implements Runnable{
              httpParser = new HttpParser(this.CLIENTSOCKET.getInputStream());
              this.REQUEST = httpParser.parseHttpRequest();
             //System.out.println(Server.CONTEXTS);
-             if (!Server.CONTEXTS.containsKey(this.REQUEST.getContextPath())){
+             if (!Server.CONTEXTMAP.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
-                 writer.write(HttpResponse.getNotFoundHTMLResponse(this.REQUEST).toString());
+                 writer.write(HttpResponse.getNotFoundHttpResponse(this.REQUEST).toString());
                  writer.flush();
                  writer.close();
              }
              else {
-                 System.out.println(this.REQUEST.getContextPath());
                  // this part is what gets interesting to actually fetch file and send.
                  // and this is also where i can add handlers later on.
                  //BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
                  //BufferedReader reader = new BufferedReader(new FileReader(new File(Server.CONTEXTS.get(this.REQUEST.getContextPath()))));
                  BufferedOutputStream writer = new BufferedOutputStream(this.CLIENTSOCKET.getOutputStream());
-                 BufferedInputStream reader = new BufferedInputStream(new FileInputStream(new File(Server.CONTEXTS.get(this.REQUEST.getContextPath()))));
-
+                 BufferedInputStream reader = new BufferedInputStream(new FileInputStream(new File(Server.CONTEXTMAP.get(this.REQUEST.getContextPath()))));
+                 System.out.println(HttpResponse.getOKHttpResponse(this.REQUEST).toString());
                  writer.write("HTTP/1.1 200 OK\n".getBytes());
                  writer.write("Server: wow\n".getBytes());
                  if(this.REQUEST.getContextPath().endsWith(".jpeg")) {

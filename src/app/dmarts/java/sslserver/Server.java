@@ -9,14 +9,12 @@ import app.dmarts.java.lib.Defs;
 import app.dmarts.java.lib.HttpClient;
 import javax.net.ssl.*;
 import java.io.*;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -35,7 +33,7 @@ public final class Server implements Runnable{
     private int PORT, BACKLOG;
     private SSLServerSocket sslServerSocket;
     ExecutorService CLIENTTHREADPOOL;
-    public static java.util.concurrent.ConcurrentHashMap<String, String> CONTEXTS = new ConcurrentHashMap<>(); // might need to consider to have nio watcher to add new folders in context, hence concurrenthashmap
+    public static java.util.concurrent.ConcurrentHashMap<String, String> CONTEXTMAP = new ConcurrentHashMap<>(); // might need to consider to have nio watcher to add new folders in context, hence concurrenthashmap
 
     private BufferedReader READER;
 
@@ -46,7 +44,7 @@ public final class Server implements Runnable{
     }
 
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
-        CONTEXTS.put("/",Paths.get("www").toAbsolutePath().toString());
+        CONTEXTMAP.put("/",Paths.get("www").toAbsolutePath().toString());
 
         Stream<Path> stream = Files.walk(Paths.get("www"),Defs.FILE_DEPTH_FROM_DOCROOT);
         Set<String> files = (stream
@@ -56,7 +54,7 @@ public final class Server implements Runnable{
                 .collect(Collectors.toSet()));
         for(String file:files){
             if (file.endsWith("www")) continue;
-            CONTEXTS.put(file.split("www")[1].replace("\\","/"),file);
+            CONTEXTMAP.put(file.split("www")[1].replace("\\","/"),file);
         }
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");
