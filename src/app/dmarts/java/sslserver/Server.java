@@ -48,7 +48,7 @@ public final class Server implements Runnable{
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
         CONTEXTS.put("/",Paths.get("www").toAbsolutePath().toString());
 
-        Stream<Path> stream = Files.walk(Paths.get("www"),1000);
+        Stream<Path> stream = Files.walk(Paths.get("www"),Defs.FILE_DEPTH_FROM_DOCROOT);
         Set<String> files = (stream
                 .filter(file->!Files.isDirectory(file))
                 .map(Path::toAbsolutePath)

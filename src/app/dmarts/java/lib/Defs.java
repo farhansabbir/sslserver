@@ -17,4 +17,5 @@ public interface Defs {
     public final int HTTP_CLIENT_BACKLOG                    = 20;
     public final String HTTP_SERVER_SIGNATURE               = "dmarts 0.1";
     public final String HTTP_SERVER_AUTHOR                  = "fsabbir@gmail.com";
+    public final int FILE_DEPTH_FROM_DOCROOT                = 1000;
 }
