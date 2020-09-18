@@ -11,6 +11,7 @@ public class HttpResponse {
     private String BODY;
     private HttpResponse(){
         HEADERS = new HashMap<>();
+        this.BODY = "";
     }
 
     @Override
@@ -30,6 +31,7 @@ public class HttpResponse {
 
         return response;
     }
+
 
     public static HttpResponse getNotFoundHTMLResponse(HttpRequest request){
         HttpResponse response = new HttpResponse();
