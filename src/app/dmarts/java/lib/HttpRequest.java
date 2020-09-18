@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class HttpRequest implements RequestContext {
     private final Logger LOGGER = Logger.getLogger(HttpRequest.class.getName());
-    private String METHOD, PATH, HTTP_VER;
+    private String METHOD, PATH, HTTP_VER, QUERY;
     private HashMap<String,String> HEADERS;
     private StringBuilder BODY;
 
@@ -20,8 +20,19 @@ public class HttpRequest implements RequestContext {
         this.HEADERS = headers;
         Pattern pattern = Pattern.compile("\\s");
         this.METHOD = (pattern.split(requestline)[0]);
-        this.PATH = (pattern.split(requestline)[1]);
         this.HTTP_VER = (pattern.split(requestline)[2]);
+        requestline = pattern.split(requestline)[1];
+        pattern = Pattern.compile("[?]");
+        this.PATH = (pattern.split(requestline)[0]);
+        this.QUERY = (pattern.split(requestline)[1]);
+    }
+
+    public boolean requestHasQuery(){
+        return this.QUERY.length()>0 ? true : false;
+    }
+
+    public String getQuery(){
+        return this.QUERY;
     }
 
     public String getRequestMethod(){

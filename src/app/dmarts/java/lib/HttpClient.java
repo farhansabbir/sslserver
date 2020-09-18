@@ -23,6 +23,7 @@ public class HttpClient implements Runnable{
 
     @Override
     public void run() {
+        // HTTP is stateless, so we dont need same thread to handle all requests; hence no forever loops
         HttpParser httpParser = null;
         try {
              httpParser = new HttpParser(this.CLIENTSOCKET.getInputStream());
@@ -33,15 +34,14 @@ public class HttpClient implements Runnable{
                  writer.flush();
                  writer.close();
              }
-            System.out.println(Thread.currentThread().getName());
+             else {
+                 // this part is what gets interesting to actually fetch file and send.
+                 // and this is also where i can add handlers later on.
+
+
+             }
         } catch (Exception e) {
             System.err.println(e);
         }
-        /* we want to indefinitely communicate with client, but lets get it later
-        while (true){
-
-        }
-        *
-         */
     }
 }
