@@ -42,7 +42,7 @@ public class HttpClient implements Runnable{
                  //BufferedReader reader = new BufferedReader(new FileReader(new File(Server.CONTEXTS.get(this.REQUEST.getContextPath()))));
                  BufferedOutputStream writer = new BufferedOutputStream(this.CLIENTSOCKET.getOutputStream());
                  BufferedInputStream reader = new BufferedInputStream(new FileInputStream(new File(Server.CONTEXTMAP.get(this.REQUEST.getContextPath()))));
-                 System.out.println(HttpResponse.getOKHttpResponse(this.REQUEST).toString());
+                 System.out.println();
                  writer.write("HTTP/1.1 200 OK\n".getBytes());
                  writer.write("Server: wow\n".getBytes());
                  if(this.REQUEST.getContextPath().endsWith(".jpeg")) {
