@@ -17,17 +17,21 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /***
  * No one is allowed to extend this class; It should effectively be a singleton, but let's see where it goes
  */
 
 public final class Server implements Runnable{
-
+    private final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private int PORT, BACKLOG;
     private SSLServerSocket sslServerSocket;
     ExecutorService CLIENTTHREADPOOL;
@@ -42,11 +46,24 @@ public final class Server implements Runnable{
     }
 
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
-        DirectoryStream<Path> dirs = Files.newDirectoryStream(Paths.get("www"));
         CONTEXTS.put("/",Paths.get("www").toAbsolutePath().toString());
-        for(Path dir: dirs){
+
+        Stream<Path> stream = Files.walk(Paths.get("www"),1000);
+        Set<String> files = (stream
+                .filter(file->!Files.isDirectory(file))
+                .map(Path::toAbsolutePath)
+                .map(Path::toString)
+                .collect(Collectors.toSet()));
+        for(String file:files){
+            if (file.endsWith("www")) continue;
+            CONTEXTS.put(file.split("www")[1].replace("\\","/"),file);
+        }
+
+        System.out.println(CONTEXTS);
+        /*for(Path dir: dirs){
             CONTEXTS.put("/" + dir.getFileName(), dir.toAbsolutePath().toString());
         }
+         */
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream("keystore.jks"),"123456".toCharArray());

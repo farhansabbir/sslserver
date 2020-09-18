@@ -6,9 +6,11 @@ package app.dmarts.java.lib;
  */
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class HttpRequest implements RequestContext {
+    private final Logger LOGGER = Logger.getLogger(HttpRequest.class.getName());
     private String METHOD, PATH, HTTP_VER;
     private HashMap<String,String> HEADERS;
     private StringBuilder BODY;

@@ -2,8 +2,10 @@ package app.dmarts.java.lib;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 public class HttpResponse {
+    private final Logger LOGGER = Logger.getLogger(HttpResponse.class.getName());
     private String FIRSTLINE;
     private HashMap<String, String> HEADERS;
     private HttpResponse(){

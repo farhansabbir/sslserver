@@ -10,8 +10,10 @@ import app.dmarts.java.sslserver.Server;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Logger;
 
 public class HttpClient implements Runnable{
+    private final Logger LOGGER = Logger.getLogger(HttpClient.class.getName());
 
     private Socket CLIENTSOCKET;
     private HttpRequest REQUEST;
@@ -28,7 +30,6 @@ public class HttpClient implements Runnable{
              if (!Server.CONTEXTS.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
                  writer.write(HttpResponse.getNotFoundHTMLResponse(this.REQUEST));
-                 //writer.write(this.REQUEST.getHttpVersion() + " " + Defs.HTTP_STATUS_NOT_FOUND_INT + " Not Found\nServer: devn\nContent-type:text/html\n\n<h1>Not Found</h1>");
                  writer.flush();
                  writer.close();
              }
