@@ -49,6 +49,9 @@ public class HttpClient implements Runnable{
                  if(this.REQUEST.getContextPath().endsWith(".jpeg")) {
                      writer.write("Content-type:image/jpg\n\n".getBytes());
                  }
+                 else if(this.REQUEST.getContextPath().endsWith(".png")) {
+                     writer.write("Content-type:image/png\n\n".getBytes());
+                 }
                  else if(this.REQUEST.getContextPath().endsWith(".html")) {
                      writer.write("Content-type:text/html\n\n".getBytes());
                  }
