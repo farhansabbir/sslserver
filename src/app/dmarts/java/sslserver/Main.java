@@ -19,11 +19,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
-    private final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, KeyManagementException, UnrecoverableKeyException {
 
-        Server server = new Server(Defs.HTTP_SERVER_DEFAULT_PORT,20);
-        server.startServer();
+        try {
+            Server server = new Server(Defs.HTTP_SERVER_DEFAULT_PORT, 20);
+            server.startServer();
+            LOGGER.info("Server started on port " + Defs.HTTP_SERVER_DEFAULT_PORT);
+        }catch (java.net.BindException bex){
+            LOGGER.warning(bex.getMessage());
+            Server server = new Server(Defs.HTTP_SERVER_FALLBACK_PORT1, 20);
+            server.startServer();
+            LOGGER.info("Server started on fallback port " + Defs.HTTP_SERVER_FALLBACK_PORT1);
+        }
     }
 
 }

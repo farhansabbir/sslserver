@@ -58,12 +58,6 @@ public final class Server implements Runnable{
             if (file.endsWith("www")) continue;
             CONTEXTS.put(file.split("www")[1].replace("\\","/"),file);
         }
-
-        System.out.println(CONTEXTS);
-        /*for(Path dir: dirs){
-            CONTEXTS.put("/" + dir.getFileName(), dir.toAbsolutePath().toString());
-        }
-         */
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream("keystore.jks"),"123456".toCharArray());
@@ -88,7 +82,7 @@ public final class Server implements Runnable{
             }
         }}, new SecureRandom());
 
-        this.sslServerSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(Defs.HTTP_SERVER_DEFAULT_PORT,Defs.HTTP_CLIENT_BACKLOG);
+        this.sslServerSocket = (SSLServerSocket) sslContext.getServerSocketFactory().createServerSocket(this.PORT,Defs.HTTP_CLIENT_BACKLOG);
         this.sslServerSocket.setEnabledProtocols(new String[]{"TLSv1", "TLSv1.1", "TLSv1.2", "SSLv3"});
     }
 
