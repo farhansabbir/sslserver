@@ -30,7 +30,7 @@ public class HttpClient implements Runnable{
              this.REQUEST = httpParser.parseHttpRequest();
              if (!Server.CONTEXTS.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
-                 writer.write(HttpResponse.getNotFoundHTMLResponse(this.REQUEST));
+                 writer.write(HttpResponse.getNotFoundHTMLResponse(this.REQUEST).toString());
                  writer.flush();
                  writer.close();
              }
@@ -41,7 +41,7 @@ public class HttpClient implements Runnable{
 
              }
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
         }
     }
 }

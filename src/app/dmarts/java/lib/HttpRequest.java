@@ -24,7 +24,8 @@ public class HttpRequest implements RequestContext {
         requestline = pattern.split(requestline)[1];
         pattern = Pattern.compile("[?]");
         this.PATH = (pattern.split(requestline)[0]);
-        this.QUERY = (pattern.split(requestline)[1]);
+        if(pattern.split(requestline).length>1)
+            this.QUERY = (pattern.split(requestline)[1]);
     }
 
     public boolean requestHasQuery(){

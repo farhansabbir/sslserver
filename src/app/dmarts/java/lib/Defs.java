@@ -9,6 +9,7 @@ public interface Defs {
     public final int HTTP_STATUS_OK                         = 200;
     public final int HTTP_STATUS_NOT_FOUND_INT              = 404;
     public final String HTTP_STATUS_NOT_FOUND_STR           = "Not Found";
+    public final String HTTP_NOT_FOUND_HTML                 = "<h1>Not Found</h1>";
     public final int HTTP_SERVER_DEFAULT_PORT               = 80;
     public final int HTTP_SERVER_FALLBACK_PORT1             = 8080;
     public final int HTTP_SERVER_FALLBACK_PORT2             = 8081;
