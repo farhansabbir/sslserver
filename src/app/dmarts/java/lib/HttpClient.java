@@ -7,7 +7,6 @@ package app.dmarts.java.lib;
 
 import app.dmarts.java.sslserver.Server;
 
-import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.logging.Logger;
@@ -26,9 +25,11 @@ public class HttpClient implements Runnable{
         // HTTP is stateless, so we dont need same thread to handle all requests; hence no forever loops
         HttpParser httpParser = null;
         try {
-             httpParser = new HttpParser(this.CLIENTSOCKET.getInputStream());
+             httpParser = new HttpParser(this.CLIENTSOCKET);
              this.REQUEST = httpParser.parseHttpRequest();
-            //System.out.println(Server.CONTEXTS);
+             ContextHandler handler = (ContextHandler)Server.CONTEXTHANDLERS.get(this.REQUEST.getContextPath());
+             handler.handle(this.REQUEST);
+            /*
              if (!Server.CONTEXTMAP.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
                  writer.write(HttpResponse.getNotFoundHttpResponse(this.REQUEST).toString());
@@ -38,8 +39,9 @@ public class HttpClient implements Runnable{
              else {
                  // this part is what gets interesting to actually fetch file and send.
                  // and this is also where i can add handlers later on.
-                 //BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
-                 //BufferedReader reader = new BufferedReader(new FileReader(new File(Server.CONTEXTS.get(this.REQUEST.getContextPath()))));
+
+
+                 /*
                  BufferedOutputStream writer = new BufferedOutputStream(this.CLIENTSOCKET.getOutputStream());
                  BufferedInputStream reader = new BufferedInputStream(new FileInputStream(new File(Server.CONTEXTMAP.get(this.REQUEST.getContextPath()))));
                  System.out.println();
@@ -62,9 +64,12 @@ public class HttpClient implements Runnable{
                  }
                  reader.close();
                  writer.close();
+
+
              }
+        */
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 }

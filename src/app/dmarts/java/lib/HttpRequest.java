@@ -5,6 +5,9 @@ package app.dmarts.java.lib;
  * Web: github.com/farhansabbir
  */
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -14,6 +17,7 @@ public class HttpRequest implements RequestContext {
     private String METHOD, PATH, HTTP_VER, QUERY;
     private HashMap<String,String> HEADERS;
     private StringBuilder BODY;
+    private Socket CLIENTSOCKET;
 
     public HttpRequest(String requestline, HashMap<String, String> headers, String body){
         this.BODY = new StringBuilder(body);
@@ -52,5 +56,13 @@ public class HttpRequest implements RequestContext {
     @Override
     public String getContextPath() {
         return this.PATH;
+    }
+
+    public void setClientSocket(Socket client) {
+        this.CLIENTSOCKET = client;
+    }
+
+    public OutputStream getClientOutputStream() throws IOException {
+        return this.CLIENTSOCKET.getOutputStream();
     }
 }

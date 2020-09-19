@@ -8,11 +8,13 @@ package app.dmarts.java.sslserver;
 import app.dmarts.java.lib.ContextHandler;
 import app.dmarts.java.lib.Defs;
 import app.dmarts.java.lib.HttpClient;
-import app.dmarts.java.lib.contexthandlers.CGIHandler;
-import app.dmarts.java.lib.contexthandlers.FileHandler;
+import app.dmarts.java.lib.contexthandlers.CGIContextHandler;
+import app.dmarts.java.lib.contexthandlers.FileContextHandler;
 
 import javax.net.ssl.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,9 +51,12 @@ public final class Server implements Runnable{
     }
 
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
-        CONTEXTMAP.put("/",Paths.get("www").toAbsolutePath().toString());
-        CONTEXTHANDLERS.put("/", new CGIHandler());
 
+        CONTEXTHANDLERS.put("/", new CGIContextHandler());
+        CONTEXTHANDLERS.put(Defs.HTTP_STATUS_CONTEXT,new CGIContextHandler());
+
+        CONTEXTMAP.put("/",Paths.get("www").toAbsolutePath().toString());
+        CONTEXTMAP.put(Defs.HTTP_STATUS_CONTEXT,"");
         Stream<Path> stream = Files.walk(Paths.get("www"),Defs.FILE_DEPTH_FROM_DOCROOT);
         Set<String> files = (stream
                 .filter(file->!Files.isDirectory(file))
@@ -61,7 +66,7 @@ public final class Server implements Runnable{
         for(String file:files){
             if (file.endsWith("www")) continue;
             CONTEXTMAP.put(file.split("www")[1].replace("\\","/"),file);
-            CONTEXTHANDLERS.put(file.split("www")[1].replace("\\","/"),new FileHandler(file));
+            CONTEXTHANDLERS.put(file.split("www")[1].replace("\\","/"),new FileContextHandler(file));
         }
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");

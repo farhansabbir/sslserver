@@ -8,17 +8,19 @@ package app.dmarts.java.lib;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 
 public class HttpParser{
 
     private BufferedReader READER;
+    private Socket CLIENT;
 
-    public HttpParser(InputStream inputStream){
-        this.READER = new BufferedReader(new InputStreamReader(inputStream));
+    public HttpParser(Socket clientsocket) throws IOException {
+        this.CLIENT = clientsocket;
+        this.READER = new BufferedReader(new InputStreamReader(clientsocket.getInputStream()));
     }
 
     public HttpRequest parseHttpRequest() throws IOException {
@@ -27,6 +29,7 @@ public class HttpParser{
         HashMap<String, String> headers = this.getRequestHeaders();
         String body = this.getRequestBody();
         request = new HttpRequest(req_line,headers,body);
+        request.setClientSocket(this.CLIENT);
         return request;
     }
     private String readByLine() throws IOException {
