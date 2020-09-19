@@ -17,6 +17,9 @@ public class FileContextHandler implements ContextHandler {
     @Override
     public void handle(HttpRequest request) throws IOException {
         if(Server.CONTEXTHANDLERS.containsKey(request.getContextPath())) {
+            synchronized (Server.STATUS) {
+                Server.STATUS.get(request.getContextPath()).getAsJsonArray().add(request.getClientSocket().getRemoteSocketAddress().toString());
+            }
             if(new File(this.FILE).exists()){
                 HttpResponse response = null;
                 if(this.FILE.endsWith(".html")){

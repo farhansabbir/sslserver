@@ -10,6 +10,8 @@ import app.dmarts.java.lib.Defs;
 import app.dmarts.java.lib.HttpClient;
 import app.dmarts.java.lib.contexthandlers.CGIContextHandler;
 import app.dmarts.java.lib.contexthandlers.FileContextHandler;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import javax.net.ssl.*;
 import java.io.BufferedReader;
@@ -40,7 +42,7 @@ public final class Server implements Runnable{
     private SSLServerSocket sslServerSocket;
     ExecutorService CLIENTTHREADPOOL;
     public static ConcurrentHashMap<String, String> CONTEXTMAP = new ConcurrentHashMap<>(); // might need to consider to have nio watcher to add new folders in context, hence concurrenthashmap
-
+    public static JsonObject STATUS = new JsonObject();
     public static ConcurrentHashMap<String, ContextHandler> CONTEXTHANDLERS = new ConcurrentHashMap<>();
     private BufferedReader READER;
 
@@ -49,6 +51,7 @@ public final class Server implements Runnable{
         this.PORT = port;
         this.initialize();
     }
+
 
     private void initialize() throws IOException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException, CertificateException {
 
@@ -68,6 +71,12 @@ public final class Server implements Runnable{
             CONTEXTMAP.put(file.split("www")[1].replace("\\","/"),file);
             CONTEXTHANDLERS.put(file.split("www")[1].replace("\\","/"),new FileContextHandler(file));
         }
+        CONTEXTHANDLERS.forEach((k,v)->{
+            synchronized (STATUS){
+                STATUS.add(k,new JsonArray());
+            }
+        });
+        System.out.println(STATUS);
         System.setProperty("sun.security.ssl.allowUnsafeRenegotiation","true");
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream("keystore.jks"),"123456".toCharArray());
