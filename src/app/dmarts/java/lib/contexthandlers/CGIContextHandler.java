@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CGIContextHandler implements ContextHandler {
     @Override
     public void handle(HttpRequest request) throws IOException {
-        System.out.println("In CGI handler" + request.getClientSocket().getRemoteSocketAddress());
+
         HttpResponse response = new HttpResponse.HttpResponseBuilder()
                 .addHeader("Content-type","application/json")
                 .build();
