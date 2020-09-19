@@ -2,9 +2,10 @@ package app.dmarts.java.lib.contexthandlers;
 
 import app.dmarts.java.lib.ContextHandler;
 import app.dmarts.java.lib.HttpRequest;
+import app.dmarts.java.lib.HttpResponse;
 import app.dmarts.java.sslserver.Server;
 
-import java.io.File;
+import java.io.*;
 
 public class FileContextHandler implements ContextHandler {
     private String FILE;
@@ -14,15 +15,72 @@ public class FileContextHandler implements ContextHandler {
     }
 
     @Override
-    public void handle(HttpRequest request) {
+    public void handle(HttpRequest request) throws IOException {
         if(Server.CONTEXTHANDLERS.containsKey(request.getContextPath())) {
             if(new File(this.FILE).exists()){
-                System.out.println("File " + this.FILE + " exists");
+                HttpResponse response = null;
+                if(this.FILE.endsWith(".html")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","text/html")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
+                else if(this.FILE.endsWith(".jpg")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","image/jpeg")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
+                else if(this.FILE.endsWith(".png")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","image/png")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
+                else if(this.FILE.endsWith(".jpeg")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","image/jpeg")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
+                else if(this.FILE.endsWith(".js")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","text/javascript")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
+                else {
+                        response = new HttpResponse.HttpResponseBuilder()
+                                .addHeader("Content-type","text/txt")
+                                .addHeader("Content-length","" + new File(this.FILE).length())
+                                .setOKResponseLine(request.getHttpVersion())
+                                .build();
+                }
+                BufferedInputStream IN = new BufferedInputStream(new FileInputStream(this.FILE));
+                BufferedOutputStream OUT = new BufferedOutputStream(request.getClientSocket().getOutputStream());
+                OUT.write(response.toString().getBytes());
+                byte[] buffer = new byte[8192];
+                while (IN.read(buffer)!=-1){
+                    OUT.write(buffer);
+                    OUT.flush();
+                }
+                OUT.close();
+                IN.close();
+                return;
             }
         }
+        System.out.println("Context doesn't exist" + request.getContextPath());
         // If I am here, it means either context doesn't exist or actual physical file doesn't
         // either way, its 404.
-
-
+        HttpResponse response = HttpResponse.getNotFoundHttpResponse(request);
+        BufferedOutputStream OUT = new BufferedOutputStream(request.getClientSocket().getOutputStream());
+        OUT.write(response.toString().getBytes());
+        OUT.close();
+        System.out.println(request.getClientSocket().isClosed());
     }
 }

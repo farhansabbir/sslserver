@@ -6,7 +6,6 @@ package app.dmarts.java.lib;
  */
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -62,7 +61,7 @@ public class HttpRequest implements RequestContext {
         this.CLIENTSOCKET = client;
     }
 
-    public OutputStream getClientOutputStream() throws IOException {
-        return this.CLIENTSOCKET.getOutputStream();
+    public Socket getClientSocket() throws IOException {
+        return this.CLIENTSOCKET;
     }
 }

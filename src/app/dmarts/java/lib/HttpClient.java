@@ -27,8 +27,14 @@ public class HttpClient implements Runnable{
         try {
              httpParser = new HttpParser(this.CLIENTSOCKET);
              this.REQUEST = httpParser.parseHttpRequest();
-             ContextHandler handler = (ContextHandler)Server.CONTEXTHANDLERS.get(this.REQUEST.getContextPath());
-             handler.handle(this.REQUEST);
+            ContextHandler handler;
+            if(Server.CONTEXTHANDLERS.containsKey(this.REQUEST.getContextPath())) {
+                handler = (ContextHandler) Server.CONTEXTHANDLERS.get(this.REQUEST.getContextPath());
+            }
+            else {
+                handler = new DefaultContextHandler();
+            }
+            handler.handle(this.REQUEST);
             /*
              if (!Server.CONTEXTMAP.containsKey(this.REQUEST.getContextPath())){
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.CLIENTSOCKET.getOutputStream()));
