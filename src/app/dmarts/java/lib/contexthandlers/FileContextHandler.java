@@ -57,6 +57,13 @@ public class FileContextHandler implements ContextHandler {
                             .setOKResponseLine(request.getHttpVersion())
                             .build();
                 }
+                else if(this.FILE.endsWith(".css")){
+                    response = new HttpResponse.HttpResponseBuilder()
+                            .addHeader("Content-type","text/css")
+                            .addHeader("Content-length","" + new File(this.FILE).length())
+                            .setOKResponseLine(request.getHttpVersion())
+                            .build();
+                }
                 else {
                         response = new HttpResponse.HttpResponseBuilder()
                                 .addHeader("Content-type","text/txt")
