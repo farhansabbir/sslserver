@@ -86,6 +86,10 @@ public class HttpResponse {
         }
     }
 
+    public void setHeader(String key, String value){
+        this.HEADERS.put(key,value);
+    }
+
 
     public static HttpResponse getNotFoundHttpResponse(HttpRequest request){
         return new HttpResponseBuilder()

@@ -60,6 +60,7 @@ public class HttpParser{
         HashMap<String,String> ret = new HashMap<>();
         String header;
         while((header = this.readByLine()).length()!=0) {
+
             ret.put(header.split(":")[0].trim(),header.split(":")[1].trim());
         }
         return ret;

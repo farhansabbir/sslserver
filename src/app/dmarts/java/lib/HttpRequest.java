@@ -15,12 +15,14 @@ public class HttpRequest implements RequestContext {
     private final Logger LOGGER = Logger.getLogger(HttpRequest.class.getName());
     private String METHOD, PATH, HTTP_VER, QUERY;
     private HashMap<String,String> HEADERS;
+    private HashMap<String, String> COOKIE;
     private StringBuilder BODY;
     private Socket CLIENTSOCKET;
 
     public HttpRequest(String requestline, HashMap<String, String> headers, String body){
         this.BODY = new StringBuilder(body);
         this.HEADERS = headers;
+        this.COOKIE = new HashMap<>();
         Pattern pattern = Pattern.compile("\\s");
         this.METHOD = (pattern.split(requestline)[0]);
         this.HTTP_VER = (pattern.split(requestline)[2]);

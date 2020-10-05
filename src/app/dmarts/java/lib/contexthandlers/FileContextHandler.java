@@ -6,6 +6,7 @@ import app.dmarts.java.lib.HttpResponse;
 import app.dmarts.java.sslserver.Server;
 
 import java.io.*;
+import java.util.Base64;
 
 public class FileContextHandler implements ContextHandler {
     private String FILE;
@@ -20,6 +21,7 @@ public class FileContextHandler implements ContextHandler {
             synchronized (Server.STATUS) {
                 Server.STATUS.get(request.getContextPath()).getAsJsonArray().add(request.getClientSocket().getRemoteSocketAddress().toString());
             }
+
             if(new File(this.FILE).exists()){
                 HttpResponse response = null;
                 if(this.FILE.endsWith(".html")){
@@ -33,6 +35,7 @@ public class FileContextHandler implements ContextHandler {
                     response = new HttpResponse.HttpResponseBuilder()
                             .addHeader("Content-type","image/jpeg")
                             .addHeader("Content-length","" + new File(this.FILE).length())
+                            .addHeader("Set-Cookie","hello=world")
                             .setOKResponseLine(request.getHttpVersion())
                             .build();
                 }
@@ -40,6 +43,7 @@ public class FileContextHandler implements ContextHandler {
                     response = new HttpResponse.HttpResponseBuilder()
                             .addHeader("Content-type","image/png")
                             .addHeader("Content-length","" + new File(this.FILE).length())
+                            .addHeader("Set-Cookie","hello=world")
                             .setOKResponseLine(request.getHttpVersion())
                             .build();
                 }
@@ -47,6 +51,7 @@ public class FileContextHandler implements ContextHandler {
                     response = new HttpResponse.HttpResponseBuilder()
                             .addHeader("Content-type","image/jpeg")
                             .addHeader("Content-length","" + new File(this.FILE).length())
+                            .addHeader("Set-Cookie","hello=world")
                             .setOKResponseLine(request.getHttpVersion())
                             .build();
                 }
@@ -73,6 +78,14 @@ public class FileContextHandler implements ContextHandler {
                 }
                 BufferedInputStream IN = new BufferedInputStream(new FileInputStream(this.FILE));
                 BufferedOutputStream OUT = new BufferedOutputStream(request.getClientSocket().getOutputStream());
+                if(request.getRequestHeaders().containsKey("Cookie")){
+                    System.out.println("Contains cookie: " + request.getRequestHeaders().get("Cookie") + ". Resetting.");
+                    response.setHeader("Set-Cookie", "hello='" + Base64.getEncoder().encodeToString("world".getBytes()) + "'; Max-Age=10000000");
+                }
+                else{
+                    System.out.println("No cookie. Setting it...");
+                    response.setHeader("Set-Cookie", "hello='" + Base64.getEncoder().encodeToString("world".getBytes()) + "'; Max-Age=10000000");
+                }
                 OUT.write(response.toString().getBytes());
                 byte[] buffer = new byte[8192];
                 while (IN.read(buffer)!=-1){
